@@ -225,10 +225,14 @@ if st.button("🚀 Generate Leads", type="primary", disabled=(url_count == 0)):
                 status_text.text("⏳ Sending request to n8n workflow...")
                 progress_bar.progress(10)
                 
+                # Debug info
+                st.info(f"🔍 Sending to: `{n8n_webhook_url}`")
+                
                 response = requests.post(
                     n8n_webhook_url,
                     json={"urls": valid_urls},
-                    timeout=600  # 10 minute timeout
+                    timeout=600,  # 10 minute timeout
+                    headers={"Content-Type": "application/json"}
                 )
                 
                 progress_bar.progress(50)
@@ -326,19 +330,51 @@ if st.button("🚀 Generate Leads", type="primary", disabled=(url_count == 0)):
                         with col4:
                             st.metric("Processing Time", f"{elapsed:.1f}s")
                 
-            except requests.exceptions.ConnectionError:
+            except requests.exceptions.ConnectionError as e:
                 progress_bar.empty()
                 status_text.empty()
                 st.error("❌ **Connection Failed**")
-                st.markdown("""
-                ### n8n is not running or not accessible
                 
-                **Quick Fix:**
-                1. Open terminal and run: `n8n start`
-                2. Go to http://localhost:5678
-                3. Make sure your workflow is **ACTIVE** (toggle in top right)
-                4. Use the **Production** webhook URL (without '-test')
-                """)
+                # Show detailed error
+                st.code(f"Error details: {str(e)}")
+                
+                # Check if n8n is actually running
+                try:
+                    test_response = requests.get("http://localhost:5678", timeout=2)
+                    st.success("✅ n8n IS running on localhost:5678")
+                    st.error("❌ But the webhook URL is not responding!")
+                    
+                    st.markdown("""
+                    ### The webhook is not registered. Here's what to check:
+                    
+                    1. **Is your workflow ACTIVE?**
+                       - Go to http://localhost:5678
+                       - Look at top right corner
+                       - The toggle must be ON (blue/green)
+                    
+                    2. **Are you using the PRODUCTION URL?**
+                       - Click on your Webhook node
+                       - Copy the **Production URL** (appears after activating)
+                       - Should look like: `http://localhost:5678/webhook/...`
+                       - NOT: `http://localhost:5678/webhook-test/...`
+                    
+                    3. **Try this in terminal:**
+                    """)
+                    
+                    st.code(f"""curl -X POST {n8n_webhook_url} \\
+  -H "Content-Type: application/json" \\
+  -d '{{"urls": ["https://linkedin.com/in/test"]}}'""", language="bash")
+                    
+                except:
+                    st.markdown("""
+                    ### n8n is not running or not accessible
+                    
+                    **Quick Fix:**
+                    1. Open terminal and run: `n8n start`
+                    2. Go to http://localhost:5678
+                    3. Make sure your workflow is **ACTIVE** (toggle in top right)
+                    4. Use the **Production** webhook URL (without '-test')
+                    """)
                 
             except requests.exceptions.Timeout:
                 progress_bar.empty()
