@@ -2,9 +2,9 @@ import streamlit as st
 import requests
 import pandas as pd
 
-st.set_page_config(page_title="Lead Generation UI", layout="wide")
+st.set_page_config(page_title="Lead Generation", layout="wide")
 
-st.title("🔎 Lead Generation UI (n8n + Streamlit)")
+st.title("Lead Generatio")
 
 st.write("Paste LinkedIn profile URLs below (one per line):")
 
