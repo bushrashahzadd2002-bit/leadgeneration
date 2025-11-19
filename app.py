@@ -4,7 +4,7 @@ import pandas as pd
 
 st.set_page_config(page_title="Lead Generation", layout="wide")
 
-st.title("Lead Generatio")
+st.title("Lead Generation")
 
 st.write("Paste LinkedIn profile URLs below (one per line):")
 
