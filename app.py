@@ -10,7 +10,7 @@ st.write("Paste LinkedIn profile URLs below (one per line):")
 
 urls_input = st.text_area("LinkedIn URLs", height=200)
 
-n8n_webhook_url = "https://oversolemnly-vanitied-milagro.ngrok-free.dev/webhook-test/88ea4c9b-b24b-4f79-b553-338914ba83f1"
+n8n_webhook_url = "https://aiuhf.app.n8n.cloud/webhook/88ea4c9b-b24b-4f79-b553-338914ba83f1"
 
 if st.button("Run Lead Generation"):
     if not urls_input.strip():
